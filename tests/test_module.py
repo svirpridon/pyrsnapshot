@@ -10,26 +10,26 @@ class TestSnapshots(unittest.TestCase):
     #     weeks should to months, months should not to years.
     NOW = arrow.utcnow()
     DATA = (
-        pyrs.Snapshot('hours',  -1, NOW),
-        pyrs.Snapshot('hours',   0, NOW.replace(hours=-1)),
-        pyrs.Snapshot('hours',   1, NOW.replace(hours=-2)),
-        pyrs.Snapshot('hours',  23, NOW.replace(hours=-24)),
-        pyrs.Snapshot('days',    0, NOW.replace(days=-2)),
-        pyrs.Snapshot('days',    5, NOW.replace(days=-8)),
+        pyrs.Snapshot('hourly.00', NOW),
+        pyrs.Snapshot('hourly.01', NOW.shift(hours=-1)),
+        pyrs.Snapshot('hourly.02', NOW.shift(hours=-2)),
+        pyrs.Snapshot('hourly.23', NOW.shift(hours=-24)),
+        pyrs.Snapshot('daily.00', NOW.shift(days=-2)),
+        pyrs.Snapshot('daily.05', NOW.shift(days=-8)),
         # We "lost" days.6, so no rotation
-        pyrs.Snapshot('weeks',   0, NOW.replace(weeks=-2)),
-        pyrs.Snapshot('weeks',   3, NOW.replace(weeks=-6)),
-        pyrs.Snapshot('months',  0, NOW.replace(months=-2)),
-        pyrs.Snapshot('months', 10, NOW.replace(months=-13)),
+        pyrs.Snapshot('weekly.00', NOW.shift(weeks=-2)),
+        pyrs.Snapshot('weekly.03', NOW.shift(weeks=-6)),
+        pyrs.Snapshot('monthly.00', NOW.shift(months=-2)),
+        pyrs.Snapshot('monthly.10', NOW.shift(months=-13)),
         # We "lost" months.11, so no rotation
-        pyrs.Snapshot('years',   0, NOW.replace(years=-2)),
-        pyrs.Snapshot('years',   4, NOW.replace(years=-7)),
+        pyrs.Snapshot('yearly.0', NOW.shift(years=-2)),
+        pyrs.Snapshot('yearly.4', NOW.shift(years=-7)),
     )
 
     def test_sorting(self):
         shuffled = list(self.DATA)[:]
         random.shuffle(shuffled)
-        # Fix the 1-in-many it was actually ordered right.
+        # Fix the slight chance shuffle didn't change the ordering.
         if shuffled == self.DATA:
             shuffled.reverse()
 
@@ -38,8 +38,8 @@ class TestSnapshots(unittest.TestCase):
 
     def test_filter(self):
         snapshots = pyrs.Snapshots(*self.DATA)
-        dailies = snapshots._filter('days')
-        weeklies = snapshots._filter('weeks')
+        dailies = snapshots._filter('daily')
+        weeklies = snapshots._filter('weekly')
         # We didn't make up data
         assert_that(self.DATA).contains(*dailies)
         assert_that(self.DATA).contains(*weeklies)
@@ -51,16 +51,17 @@ class TestSnapshots(unittest.TestCase):
         assert_that(weeklies).is_length(2)
 
     def test_next_frequency(self):
-        first = pyrs.FREQUENCIES[0:-1]
-        last = pyrs.FREQUENCIES[1:]
+        snapshots = pyrs.Snapshots(*self.DATA)
+        first = pyrs.ADJECTIVES[0:-1]
+        last = pyrs.ADJECTIVES[1:]
         for small, big in zip(first, last):
-            assert_that(pyrs.next_frequency(small)).is_equal_to(big)
-        assert_that(pyrs.next_frequency).raises(IndexError).when_called_with(big)
+            assert_that(snapshots.next_frequency(small)).is_equal_to(big)
+        assert_that(snapshots.next_frequency).is_none()
 
     def test_rotate(self):
         snapshots = pyrs.Snapshots(*self.DATA)
-        assert_that(snapshots.should_rotate_up('hours')).is_true()
-        assert_that(snapshots.should_rotate_up('days')).is_false()
-        assert_that(snapshots.should_rotate_up('weeks')).is_true()
-        assert_that(snapshots.should_rotate_up('months')).is_false()
-        assert_that(snapshots.should_rotate_up('years')).is_true()
+        assert_that(snapshots.should_rotate_up('hourly')).is_true()
+        assert_that(snapshots.should_rotate_up('daily')).is_false()
+        assert_that(snapshots.should_rotate_up('weekly')).is_true()
+        assert_that(snapshots.should_rotate_up('monthly')).is_false()
+        assert_that(snapshots.should_rotate_up('yearly')).is_true()
