@@ -26,7 +26,6 @@
 #       --years 4
 
 import arrow
-import collections
 import functools
 import os
 import re
@@ -38,6 +37,7 @@ from fabric.contrib.project import rsync_project
 LOCAL = '<local-only>'
 NOUNS = ['hours', 'days', 'weeks', 'months', 'years']
 ADJECTIVES = ['hourly', 'daily', 'weekly', 'monthly', 'yearly']
+DEFAULTS = [24, 7, 4, 13, 4]
 NOMINALIZE = dict(zip(ADJECTIVES, NOUNS))
 SNAPSHOT = re.compile(r'({})[.]([\d]{{2}})'.format('|'.join(ADJECTIVES)))
 
@@ -195,14 +195,14 @@ class Snapshots(object):
         Return true if the frequency listed is ready to rotate.
         '''
         snapshots = self.filter(frequency)
-        if len(snapshots) >= 2:
+        if len(snapshots) >= 2 and snapshots[0].filename.endswith('.00'):
             # Compare the first two snapshots to see if we are ready
             candidate, leader, *_ = self.filter(frequency)
             delta = { NOMINALIZE[frequency]: -1 }
             return candidate.arrow.shift(**delta) >= leader.arrow
-        elif len(snapshots) == 1:
+        elif len(snapshots) == 1 and snapshots[0].filename.endswith('.00'):
             # Rotate a single snapshot only if it is in the temp spot
-            return snapshots[0].filename.endswith('.00')
+            return True
         else:
             return False
 
