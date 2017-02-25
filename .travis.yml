@@ -1,10 +1,17 @@
 language: python
 python:
-  - 3.5
+- 3.5
 install:
-  - pip install -e .
+- pip install -e .
 script:
-  - python setup.py test
+- python setup.py test
 branches:
   only:
-    - master
+  - master
+deploy:
+  provider: pypi
+  user: jbooth
+  password:
+    secure: sL+QLTw1tutwW9ZyMAGOcNSq5QFJV4uhZ3lzKfb0yO62/NU7eQLYodcOM13h2ZaK/GV1GiJTOWRK8WTeedCuZ6DmMwQBLOjWKw2V2P4nPdQsrJ9sECaKUvjY5eICsZH+z5vLRRhr/v6bAVJ9zBjOEENi1K+08sAeng6l7xRAo1Txv24P5P5dVSGXaMrQmTPZlhUyzB8+b8wKa0VnWHFoeWJFgPsjHrBwyLIrfkkHc/na6BjrbHqGbd0DnnCK34CC96VjIUh8gPvL4XMto0YRg0ar3wXxf+hssGaP8ZQmsBzU0wwzdGoJPfTgg+bNw3B7js5Z+kSETxJ7/Z9+qbwHCa3WQC9dO8Cq4X/ZShg9eALbxmhkW40DSA3OOvXQChVnUWL1xyAMd5ru9hCa2U7NqSkUDIqYXLfiEQDx2pQjrXTLRlAKo3tMhxGamDDl4D6G8xHfGZK991nBmYuQlmVjdcwagTh4GRPJyw6LEvS2BUc+KhS4hOESnrRsj4s632u2k8dUVr7MCFlHTiq7YdWtx0WIxhJUsyjL+nt+sBh2Kr60v8kxCL4A8nYAzzryD+FmYqjwc0mF/GMaLdRhvMJOGxGCtQOnJO16lmY9R7Ao1KyHTAEw5Uzw6no0l22anFxBeM31j0hEMIAQGDWK39AzO6QhXARDjCAftVezNhWPqN4=
+  on:
+    tags: true

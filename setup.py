@@ -6,7 +6,7 @@ config = {
     'url': 'https://github.com/svirpridon/pyrsnapshot',
     'author': 'Jonathan Booth',
     'author_email': 'jbooth@gmail.com',
-    'version': '0.2.3',
+    'version': '0.3.0',
     'license': 'GPLv3',
     'classifiers': [
         'Development Status :: 3 - Alpha',
@@ -23,7 +23,7 @@ config = {
     'keywords': 'rsync backup',
     'packages': ['pyrsnapshot'],
     'install_requires': ['assertpy', 'arrow', 'fabric3'],
-    'tests_require': ['nose2']
+    'tests_require': ['nose2'],
     'entry_points': {
         'console_scripts': [
             'pyrsnapshot = pyrsnapshot.__main__:main',
