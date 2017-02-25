@@ -22,7 +22,8 @@ config = {
     ],
     'keywords': 'rsync backup',
     'packages': ['pyrsnapshot'],
-    'install_requires': ['nose2', 'assertpy', 'arrow', 'fabric3'],
+    'install_requires': ['assertpy', 'arrow', 'fabric3'],
+    'tests_require': ['nose2']
     'entry_points': {
         'console_scripts': [
             'pyrsnapshot = pyrsnapshot.__main__:main',
