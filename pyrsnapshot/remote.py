@@ -198,7 +198,10 @@ class Snapshots(object):
         if len(snapshots) >= 2 and snapshots[0].filename.endswith('.00'):
             # Compare the first two snapshots to see if we are ready
             candidate, leader, *_ = self.filter(frequency)
-            delta = { NOMINALIZE[frequency]: -1 }
+            # Shift less than the full frequency to allow for minor
+            # variations in start or run time to still backup every
+            # period.
+            delta = { NOMINALIZE[frequency]: -0.99 }
             return candidate.arrow.shift(**delta) >= leader.arrow
         elif len(snapshots) == 1 and snapshots[0].filename.endswith('.00'):
             # Rotate a single snapshot only if it is in the temp spot
