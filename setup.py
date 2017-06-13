@@ -6,7 +6,7 @@ config = {
     'url': 'https://github.com/svirpridon/pyrsnapshot',
     'author': 'Jonathan Booth',
     'author_email': 'jbooth@gmail.com',
-    'version': '0.3.1',
+    'version': '0.3.2',
     'license': 'GPLv3',
     'classifiers': [
         'Development Status :: 3 - Alpha',
