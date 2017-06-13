@@ -39,6 +39,7 @@ NOUNS = ['hours', 'days', 'weeks', 'months', 'years']
 ADJECTIVES = ['hourly', 'daily', 'weekly', 'monthly', 'yearly']
 DEFAULTS = [24, 7, 4, 13, 4]
 NOMINALIZE = dict(zip(ADJECTIVES, NOUNS))
+NOMINALIZE_PREV = dict(zip(ADJECTIVES, ['minutes'] + NOUNS))
 SNAPSHOT = re.compile(r'({})[.]([\d]{{2}})'.format('|'.join(ADJECTIVES)))
 
 
@@ -201,7 +202,10 @@ class Snapshots(object):
             # Shift less than the full frequency to allow for minor
             # variations in start or run time to still backup every
             # period.
-            delta = { NOMINALIZE[frequency]: -0.99 }
+            delta = {
+                NOMINALIZE[frequency]: -1,
+                NOMINALIZE_PREV[frequency]: +1,
+            }
             return candidate.arrow.shift(**delta) >= leader.arrow
         elif len(snapshots) == 1 and snapshots[0].filename.endswith('.00'):
             # Rotate a single snapshot only if it is in the temp spot
